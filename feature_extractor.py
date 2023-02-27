@@ -11,6 +11,9 @@ import librosa
 DST_SPEC = 'spectrograms'
 DST_MELSPECS = 'melspectrograms'
 DST_MFCC = 'mfcc'
+dst_rms = 'rms'
+dst_poly = 'poly feature'
+dst_chroma = 'chroma stft'
 
 
 def extract_spectrogram(y, sr=8000, n_fft=None) -> np.array:
@@ -49,6 +52,41 @@ def extract_mfcc(y, sr=8000, n_mfcc=20):
 	mfcc = librosa.feature.mfcc(y=y, sr=sr)
 	return mfcc
 
+def extract_rms(y):
+	'''
+    y = time series audio
+
+    return np.array of rms
+    '''
+
+	rms = librosa.feature.rms(y=y)
+	return rms
+
+
+def extract_poly_feutures(y):
+	'''
+
+    y = time series audio
+
+    return: np.array of poly feutures
+    '''
+
+	poly = librosa.feature.poly_features(y=y)
+	return poly
+
+
+def extract_chroma_stft(y, sr=8000, n_fft=2048):
+	'''
+
+    y = time series audio
+    sr = sample rate (8000 by default)
+
+    return: np.array of chroma stft
+    '''
+
+	chroma = librosa.feature.chroma_stft(y=y)
+	return chroma
+
 def cut_if_necessary(y, size=8000):
 	'''
 	cuts audios with duration over size
@@ -60,6 +98,7 @@ def cut_if_necessary(y, size=8000):
 		y = y[:size]
 
 	return y
+
 
 def pad_if_necessary(y, size=8000):
 	'''
@@ -87,7 +126,7 @@ def make_dirs(dst, list_dirs):
 
 
 def main(files, root, dst):
-	make_dirs(dst, [DST_SPEC, DST_MELSPECS, DST_MFCC])
+	make_dirs(dst, [DST_SPEC, DST_MELSPECS, DST_MFCC, dst_rms, dst_poly, dst_chroma])
 
 	for f in tqdm(files):
 		fpath = os.path.join(root, f)
@@ -100,10 +139,17 @@ def main(files, root, dst):
 		spec = extract_spectrogram(y)
 		melpec = extract_melspectrogram(y)
 		mfcc = extract_mfcc(y)
+		rms = extract_rms(y)
+		poly = extract_poly_feutures(y)
+		chroma = extract_chroma_stft(y)
 		
 		save_numpy(os.path.join(dst, DST_SPEC), fname=fname, arr=spec)
 		save_numpy(os.path.join(dst, DST_MELSPECS), fname=fname, arr=melpec)
 		save_numpy(os.path.join(dst, DST_MFCC), fname=fname, arr=mfcc)
+		save_numpy(os.path.join(dst, dst_rms), fname=fname, arr=rms)
+		save_numpy(os.path.join(dst, dst_poly), fname=fname, arr=poly)
+		save_numpy(os.path.join(dst, dst_chroma), fname=fname, arr=chroma)
+
 
 
 if __name__ == "__main__":
