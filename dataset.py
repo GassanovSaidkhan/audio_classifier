@@ -1,24 +1,24 @@
 import os
-import numpy as np
+
 import pandas as pd
-import torch as th
+
 from torch.utils.data import Dataset
 
 
 class AudioDataset(Dataset):
-  def __init__(self, annotations_path, dataset_path):
-    self.annotations = pd.read_csv(annotations_path)
-    self.path = dataset_path
+	"""a custom pytorch Dataset for audio classifier"""
+	def __init__(self, src_dir, labels_path, transforms=None):
+		self.src_dir = src_dir
+		self.labels = pd.read_csv(labels_path, sep='\t')
+		self.transforms = transforms
 
-  def __len__(self):
-    return len(self.annotations)
 
-  def __getitem__(self, idx):
-    path = os.path.join(self.path, self.annotations.iloc[idx, 0])
+	def __len__(self):
+		return len(self.labels)
 
-    item = np.load(path, allow_pickle=True)
-    signal, sr = th.from_numpy(item[0]), item[1]
-    label = self.annotations.iloc[idx, 1]
 
-    return signal, label
+	def __getitem__(self, idx):
+		audio_path = os.path.join(self.src_dir, self.labels.iloc[idx, 0])
+		label = self.labels.iloc[idx, 1]
 
+		return {'audio': audio_path, 'label': label}
