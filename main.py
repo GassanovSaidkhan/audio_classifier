@@ -18,12 +18,9 @@ def read_configs(path):
 
 def get_feature(feature_type, configs=None):
 	if configs:
-		features = {
-			'mel': MelSpectrogram(
-				sample_rate = configs['audio']['sr'], n_fft = configs['mel']['n_fft'], hop_length = configs['mel']['hop_length']
-				),
-			'mfcc': ''
-		}
+		features = dict(mel=MelSpectrogram(
+			sample_rate=configs['audio']['sr'], n_fft=configs['mel']['n_fft'], hop_length=configs['mel']['hop_length']
+		), mfcc='')
 	else:
 		features = {
 			'mel': MelSpectrogram(),
@@ -41,8 +38,8 @@ def main(src_dir, labels_path, transforms):
 
 	TRAIN_DURATION = configs['train']['train_duration']
 
-	train_dataset = AudioDataset(src_dir, labels_path, transforms=transform, \
-		target_sample_rate=configs['audio']['sr'], train_duration=TRAIN_DURATION)
+	train_dataset = AudioDataset(src_dir, labels_path, transforms=transform,
+								 target_sample_rate=configs['audio']['sr'], train_duration=TRAIN_DURATION)
 	# test_dataset = AudioDataset(src_dir, labels_path, transforms=None)
 
 	train_dataloader = DataLoader(train_dataset, batch_size=5, shuffle=False)
