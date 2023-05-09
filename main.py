@@ -4,23 +4,21 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-# Создание датасетов
+
 train_dataset = CustomDataset('train.txt')
 val_dataset = CustomDataset('val.txt')
 
-# Создание загрузчиков данных
+
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=32)
 
-# Создание модели и оптимизатора
+
 model = CustomModel()
 optimizer = torch.optim.Adam(model.parameters())
 
-# Функция потерь
 criterion = nn.CrossEntropyLoss()
 
 
-# Обучение модели
 def train():
     model.train()
     running_loss = 0.0
@@ -36,7 +34,7 @@ def train():
     return train_loss
 
 
-# Валидация модели
+
 def validate():
     model.eval()
     running_loss = 0.0
@@ -56,7 +54,7 @@ def validate():
     return val_loss, val_acc
 
 
-# Запуск обучения и валидации модели
+
 if name == '__main__':
     for epoch in range(10):
         train_loss = train()
